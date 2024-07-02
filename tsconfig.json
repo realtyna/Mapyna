@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "noImplicitAny": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "allowUmdGlobalAccess": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "noEmit": false,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
