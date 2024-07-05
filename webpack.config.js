@@ -1,39 +1,20 @@
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
-const CopyPlugin = require("copy-webpack-plugin")
-const TerserPlugin = require("terser-webpack-plugin")
-const webpack = require("webpack")
-const packageJson = require("./package.json")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
-const packageVersion = packageJson.version
-
-const config = (env, argv) => {
-  const isPro = argv.pro === true
-
+const config = () => {
   const config = {
     mode: "production",
-    devtool: "source-map",
     entry: {
-      index: "./src/index.ts",
-      data: "./src/data/index.ts"
+      index: "./src/index.ts"
     },
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: (chunkData) => {
-        const entryName = chunkData.chunk.name
-        if (entryName === "index") {
-          return `mapyna-${packageVersion}.min.js`
-        }
-        return "[name].js"
-      },
       library: "$",
       libraryTarget: "umd",
       clean: true
     },
-    resolve: {
-      extensions: [".js", ".jsx", ".ts", ".tsx"]
-    },
+
     module: {
       rules: [
         {
@@ -48,6 +29,10 @@ const config = (env, argv) => {
               loader: "ts-loader"
             }
           ]
+        },
+        {
+          test: /\.css$/,
+          use: ["style-loader", "css-loader"]
         }
       ]
     },
@@ -56,18 +41,8 @@ const config = (env, argv) => {
         template: "./src/index.html",
         filename: "index.html",
         inject: "body"
-      }),
-      new CopyPlugin({
-        patterns: [
-          { from: "public/styles.css", to: `mapyna-${packageVersion}.css` }
-        ]
       })
     ],
-    performance: {
-      hints: false,
-      maxEntrypointSize: 512000,
-      maxAssetSize: 512000
-    },
     devServer: {
       static: "./dist",
       hot: true,
@@ -77,23 +52,15 @@ const config = (env, argv) => {
     optimization: {
       minimize: true,
       minimizer: [`...`, new CssMinimizerPlugin()]
+    },
+    performance: {
+      hints: false,
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000
+    },
+    resolve: {
+      extensions: [".js", ".jsx", ".ts", ".tsx"]
     }
-  }
-
-  if (isPro) {
-    // Add configuration specific to the pro version
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        PRO_VERSION: JSON.stringify(true)
-      })
-    )
-  } else {
-    // Add configuration specific to the free version
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        PRO_VERSION: JSON.stringify(false)
-      })
-    )
   }
 
   return config

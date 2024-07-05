@@ -6,11 +6,11 @@ import type {
 import type { MapynaMap } from "./Map"
 
 export class MapynaRealtyFeedIntegration {
-  root: MapynaMap
+  root: MapynaMap<google.maps.Map | L.Map>
   resolution: number
   calls: Record<string, AbortController>
 
-  constructor(root: MapynaMap) {
+  constructor(root: MapynaMap<google.maps.Map | L.Map>) {
     this.root = root
     this.resolution = 0.9
     this.calls = {}

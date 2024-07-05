@@ -14,6 +14,6 @@
     "allowJs": true,
     "outDir": "dist"
   },
-  "include": ["src"],
+  "include": ["src", "public/oms.js", "src/types/global.d.ts"],
   "exclude": ["node_modules"]
 }

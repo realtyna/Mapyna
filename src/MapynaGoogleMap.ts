@@ -20,7 +20,7 @@ type TOptions = {
   mapTypeId?: string
 }
 
-export class MapynaGoogleMap extends MapynaMap {
+export class MapynaGoogleMap extends MapynaMap<google.maps.Map> {
   mapOverlay: google.maps.OverlayView | null
   advancedMarkerElement: typeof google.maps.marker.AdvancedMarkerElement | null
 
@@ -65,11 +65,9 @@ export class MapynaGoogleMap extends MapynaMap {
     this.mapOverlay.setMap(this.map)
 
     this.addDependencies().then(async () => {
-      if (this.map instanceof google.maps.Map) {
-        this.map.addListener("idle", () => {
-          this.handleViewUpdate.call(this)
-        })
-      }
+      this.map?.addListener("idle", () => {
+        this.handleViewUpdate.call(this)
+      })
 
       if (this.data) {
         this.dataSetup()
@@ -115,7 +113,7 @@ export class MapynaGoogleMap extends MapynaMap {
       )
     }
 
-    if (bounds && this.map && this.map instanceof google.maps.Map) {
+    if (bounds && this.map) {
       this.map.fitBounds(bounds)
     }
 
@@ -123,36 +121,28 @@ export class MapynaGoogleMap extends MapynaMap {
   }
 
   enableMap() {
-    if (this.map instanceof google.maps.Map) {
-      this.map.setOptions({
-        draggable: true,
-        draggableCursor: null,
-        scrollwheel: this.config.scrollWheel,
-        disableDoubleClickZoom: true
-      })
-    }
+    this.map?.setOptions({
+      draggable: true,
+      draggableCursor: null,
+      scrollwheel: this.config.scrollWheel,
+      disableDoubleClickZoom: true
+    })
   }
 
   disableMap() {
-    if (this.map instanceof google.maps.Map) {
-      this.map.setOptions({
-        draggable: false,
-        scrollwheel: false,
-        disableDoubleClickZoom: false
-      })
-    }
+    this.map?.setOptions({
+      draggable: false,
+      scrollwheel: false,
+      disableDoubleClickZoom: false
+    })
   }
 
   enableDragging() {
-    if (this.map instanceof google.maps.Map) {
-      this.map.setOptions({ draggable: true })
-    }
+    this.map?.setOptions({ draggable: true })
   }
 
   disableDragging() {
-    if (this.map instanceof google.maps.Map) {
-      this.map.setOptions({ draggable: false })
-    }
+    this.map?.setOptions({ draggable: false })
   }
 
   defineBounds() {
@@ -160,9 +150,7 @@ export class MapynaGoogleMap extends MapynaMap {
   }
 
   fitBounds(bounds: google.maps.LatLngBounds) {
-    if (this.map instanceof google.maps.Map) {
-      return this.map?.fitBounds(bounds)
-    }
+    return this.map?.fitBounds(bounds)
   }
 
   zoom() {
@@ -170,10 +158,7 @@ export class MapynaGoogleMap extends MapynaMap {
   }
 
   project(point: [number, number], zoom: number) {
-    if (
-      !this.map ||
-      (this.map instanceof google.maps.Map && !this.map.getProjection())
-    ) {
+    if (!this.map || !this.map.getProjection()) {
       return null
     }
 
@@ -182,7 +167,7 @@ export class MapynaGoogleMap extends MapynaMap {
     let googleY = null
     let googleX = null
 
-    if (this.map instanceof google.maps.Map && this.map.getProjection()) {
+    if (this.map.getProjection()) {
       const projection = this.map.getProjection()
       const googlePoint = projection?.fromLatLngToPoint(latLng)
       const scale = 2 ** zoom

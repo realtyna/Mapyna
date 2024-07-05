@@ -1,9 +1,9 @@
 import { MapynaGoogleMap } from "./MapynaGoogleMap"
 import { MapynaLeaflet } from "./MapynaLeaflet"
 import type { TMapynaConfig } from "./types/config.type"
+import "../public/styles.css"
 
 /**
- * Mapyna Factory function
  * @param {TMapynaConfig} params - Configuration parameters for Mapyna
  */
 

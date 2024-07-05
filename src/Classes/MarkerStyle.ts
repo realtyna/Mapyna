@@ -18,7 +18,8 @@ export class MapynaMarkerStyle {
   constructor(
     root: MapynaGoogleMap | MapynaLeaflet,
     pointData: Record<string, any>,
-    styles: TMapynaMarkerStyle[] | TMapynaMarkerStyle | null = null
+    styles: TMapynaMarkerStyle[] | TMapynaMarkerStyle | null = null,
+    spiderfied?: boolean
   ) {
     this.root = root
     this.styles = styles ? styles : this.root.config.markerStyles!
@@ -34,10 +35,19 @@ export class MapynaMarkerStyle {
     }
     if (this.style?.type === "price") {
       const priceValue = this.pointData[this.root.config.priceKey]
-      if (typeof this.root.config.priceRender === "function") {
-        this.style.text = this.root.config.priceRender(priceValue)
+
+      if (isNaN(priceValue)) {
+        this.style.text = this.root?.config?.priceRender?.(priceValue)
+          ? this.root.config.priceRender(priceValue)
+          : priceValue
       } else {
-        this.style.text = priceValue
+        this.style.text = spiderfied
+          ? Intl.NumberFormat("en-US", {
+              notation: "compact"
+            }).format(priceValue)
+          : this.root.config.priceRender
+            ? this.root.config.priceRender(priceValue)
+            : priceValue
       }
     }
     this.$element = null
@@ -118,9 +128,6 @@ export class MapynaMarkerStyle {
       $elementIcon.style.transform = this.anchor.transform
     }
 
-    /*$elementIcon.style.top = '-' + this.anchor.y + 'px';
-        $elementIcon.style.left = '-' + this.anchor.x + 'px';*/
-
     if (this.style && $elementIcon) {
       const $icon = this[this.style.type]($elementIcon) as HTMLElement
       this.$element.appendChild($icon)
@@ -128,10 +135,6 @@ export class MapynaMarkerStyle {
   }
 
   getAnchor() {
-    /*if (this.style.anchor) {
-            return this.style.anchor
-        }*/
-
     if (this.style?.type === "price") {
       return {
         bottom: "0",

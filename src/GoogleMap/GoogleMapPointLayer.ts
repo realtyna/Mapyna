@@ -56,7 +56,7 @@ export class MapynaGoogleMapPointLayer extends MapynaPointLayer {
 
           google.maps.event.addListener(marker, "click", () => {})
 
-          this.infoWindow.linkToPoint(marker, pointData, "click")
+          this.infoWindow.linkToPoint(marker, pointData, false, "click")
 
           this.markers.push(marker)
         }

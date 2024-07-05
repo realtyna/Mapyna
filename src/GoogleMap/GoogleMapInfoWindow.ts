@@ -9,6 +9,7 @@ export class MapynaGoogleMapInfoWindow extends MapynaInfoWindow {
   linkToPoint(
     $marker: google.maps.marker.AdvancedMarkerElement,
     pointData: Record<string, any>,
+    isSpiderfierEnabled?: boolean,
     eventName?: string
   ) {
     const result = super.linkToPointer($marker, pointData)
@@ -24,9 +25,13 @@ export class MapynaGoogleMapInfoWindow extends MapynaInfoWindow {
     if (trigger !== "click") {
       $marker.addEventListener(trigger, result.showInfoWindow)
     } else {
+      this.root
+
+      const clickEvent = isSpiderfierEnabled ? "spider_click" : "click"
+
       google.maps.event.addListener(
         $marker,
-        eventName ?? "spider_click",
+        eventName ?? clickEvent,
         result.showInfoWindow
       )
     }

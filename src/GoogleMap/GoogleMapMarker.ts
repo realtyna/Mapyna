@@ -27,15 +27,10 @@ export class MapynaGoogleMapMarker extends MapynaMarker {
     )
 
     if (OverlappingMarkerSpiderfier) {
-      this.oms = new OverlappingMarkerSpiderfier(this.root.map, {
-        markersWontMove: true,
-        markersWontHide: true,
-        keepSpiderfied: true,
-        spiralFootSeparation: 60,
-        spiralLengthFactor: 20,
-        circleFootSeparation: 100,
-        nearbyDistance: 10
-      })
+      this.oms = new OverlappingMarkerSpiderfier(
+        this.root.map,
+        this.root.config.spiderfy.options
+      )
     }
   }
 
@@ -45,6 +40,12 @@ export class MapynaGoogleMapMarker extends MapynaMarker {
     const lng = Number.parseFloat(pointData[root.config.longitudeKey])
 
     const markerStyle = new MapynaMarkerStyle(this.root, pointData)
+    const markerStyleSpiderfied = new MapynaMarkerStyle(
+      this.root,
+      pointData,
+      null,
+      true
+    )
 
     if (this.root.advancedMarkerElement) {
       const marker = new this.root.advancedMarkerElement({
@@ -55,36 +56,41 @@ export class MapynaGoogleMapMarker extends MapynaMarker {
       })
 
       if (this.root.infoWindow instanceof MapynaGoogleMapInfoWindow) {
-        this.root.infoWindow?.linkToPoint(marker, pointData)
+        this.root.infoWindow?.linkToPoint(
+          marker,
+          pointData,
+          this.isSpiderfierEnabled()
+        )
       }
 
-      const zoom = this.root.map?.getZoom()
+      google.maps.event.addListener(marker, "click", () => {})
 
-      if (zoom && zoom > 15) {
+      if (this.isSpiderfierEnabled() && this.oms) {
+        var spiderfiedMarkers = this.oms.markersNearMarker(marker, false)
+
+        // Format spiderfied markers
         google.maps.event.addListener(
           marker,
           "spider_format",
           (status: string) => {
             let spiderfiableIcon = document.createElement("span")
 
-            var spiderfiedMarkers = this.oms.markersNearMarker(marker, false)
-
             const styles =
               spiderfiedMarkers.length > 7
-                ? { bgColor: "#ef2f22", borderColor: "#ae3225" }
+                ? { bgColor: "#ef2f22" }
                 : spiderfiedMarkers.length > 3
-                  ? { bgColor: "#f7c134", borderColor: "#bd9b39" }
-                  : { bgColor: "#3b84fa", borderColor: "#3e62c2" }
+                  ? { bgColor: "#f7c134" }
+                  : { bgColor: "#3b84fa" }
 
             spiderfiableIcon.setAttribute(
               "style",
-              `line-height: 1;display: inline-block;border : 1px solid;border-color: ${styles.borderColor}; background-color: ${styles.bgColor}; border-radius: 50%; padding: 4px; color: #000; font-weight: bold;aspect-ratio: square; text-align: center; font-size: 14px;`
+              `line-height: 1;display: inline-block; background-color: ${styles.bgColor}; border-radius: 8px; padding: 4px; color: #fff; font-weight: bold; text-align: center; font-size: 14px;`
             )
-            spiderfiableIcon.innerHTML = spiderfiedMarkers.length + 1
+            spiderfiableIcon.textContent = `${spiderfiedMarkers.length + 1} unit`
 
             var iconURL =
               status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED
-                ? markerStyle?.$element
+                ? markerStyleSpiderfied?.$element
                 : status ==
                     OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE
                   ? spiderfiableIcon
@@ -99,9 +105,9 @@ export class MapynaGoogleMapMarker extends MapynaMarker {
             marker.content = iconURL
           }
         )
-      }
 
-      this.oms.addMarker(marker)
+        this.oms.addMarker(marker)
+      }
 
       this.markers.push(marker)
     }

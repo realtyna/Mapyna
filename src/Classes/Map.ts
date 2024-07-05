@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
 import config from "../config"
 import { MapynaNotify } from "./Notify"
 import eventEmitter from "./EventEmitter"
 import { MapynaRealtyFeedIntegration } from "./RealtyFeedIntegration"
 import { mergeDeep } from "../helpers"
-import type { TMapynaConfig } from "../types/config.type"
+import type { TMapynaBaseConfig, TMapynaConfig } from "../types/config.type"
 import type { MapynaControllers } from "./Controllers"
 import type { MapynaGoogleMapMarker } from "../GoogleMap/GoogleMapMarker"
 import type { MapynaLeafletMarker } from "../Leaflet/LeafletMarker"
@@ -33,9 +32,9 @@ interface IPositionCodes {
   LEFT_BOTTOM: number
 }
 
-export abstract class MapynaMap {
-  map: google.maps.Map | L.Map | null
-  config: TMapynaConfig
+export class MapynaMap<T extends google.maps.Map | L.Map> {
+  map: T | null
+  config: TMapynaBaseConfig
   data: Record<string, any>[] | Record<string, any> | null
   mapView: "map" | "satellite"
   markerObject: MapynaGoogleMapMarker | MapynaLeafletMarker | null
@@ -258,7 +257,7 @@ export abstract class MapynaMap {
   importScript(url: string) {
     return new Promise<void>((resolve, reject) => {
       const script = document.createElement("script")
-      script.src = url
+      script.src = url || ""
       script.onload = () => resolve()
       script.onerror = (err) => {
         console.log(err)
@@ -343,6 +342,11 @@ export abstract class MapynaMap {
       }
     }
 
+    this.setPayload({
+      type: "bounds",
+      geometry: this.getBoundsObject()
+    })
+
     this.emitUpdate()
 
     eventEmitter.emit("viewUpdated", this.getBoundsObject())
@@ -393,7 +397,9 @@ export abstract class MapynaMap {
     }
   }
 
-  abstract getLayersObject(): MapynaLeafletLayers | MapynaGoogleMapLayers
+  getLayersObject(): MapynaLeafletLayers | MapynaGoogleMapLayers {
+    throw new Error("Method not implemented.")
+  }
 
   getBoundsObject() {}
 

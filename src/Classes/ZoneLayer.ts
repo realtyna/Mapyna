@@ -205,7 +205,7 @@ export class MapynaZoneLayer {
         }
 
         self.root.setPayload({
-          type: "polygon",
+          type: "zone",
           geometry: simplified
         })
         self.root.emitUpdate()
@@ -272,7 +272,10 @@ export class MapynaZoneLayer {
       this.activePolygon = null
 
       if (payloadUpdate) {
-        this.root.setPayload(null)
+        this.root.setPayload({
+          type: "zoneRemoved",
+          geometry: this.root.getBoundsObject()
+        })
         this.root.emitUpdate()
       }
     }

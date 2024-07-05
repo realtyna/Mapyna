@@ -1,7 +1,7 @@
-import type { TMapynaConfig } from "./types/config.type"
+import type { TMapynaBaseConfig } from "./types/config.type"
 
 interface IConfig {
-  defaults: TMapynaConfig
+  defaults: TMapynaBaseConfig
   markerIcons: {
     [key: string]: {
       path: string
@@ -58,6 +58,7 @@ const assets = {
 
 const config: IConfig = {
   defaults: {
+    data: null,
     elementId: "mapyna",
     gMapId: null,
     scripts: {
@@ -140,6 +141,21 @@ const config: IConfig = {
       style: "default"
     },
 
+    spiderfy: {
+      enabled: true,
+      zoom: 12,
+      options: {
+        markersWontMove: true,
+        markersWontHide: true,
+        keepSpiderfied: true,
+        circleSpiralSwitchover: 9,
+        spiralFootSeparation: 26,
+        spiralLengthStart: 11,
+        spiralLengthFactor: 4,
+        circleFootSeparation: 23,
+        nearbyDistance: 20
+      }
+    },
     /*
      * Clustering Options
      */

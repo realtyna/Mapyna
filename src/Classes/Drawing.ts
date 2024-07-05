@@ -181,11 +181,11 @@ export abstract class MapynaDrawing {
         geometry: this.geometry
       })
 
-      this.root.setPayload({
+      /* this.root.setPayload({
         type: this.mode === "circle" ? this.mode : "polygon",
         geometry: this.geometry
       })
-      this.root.emitUpdate()
+      this.root.emitUpdate() */
     }
 
     this.disableCrosshair()
@@ -252,7 +252,9 @@ export abstract class MapynaDrawing {
       self.callbacks.removeLayer(this.shape)
 
       if (!moved) {
-        self.root.notify?.show("Please draw a shape!", { style: "warn" })
+        if (!this.root.drawingJustDone) {
+          self.root.notify?.show("Please draw a shape!", { style: "warn" })
+        }
         return
       }
 
@@ -415,11 +417,16 @@ export abstract class MapynaDrawing {
       this.shapeLayer = null
     }
 
-    this.root.setPayload(null)
+    this.root.setPayload({
+      type: "drawingRemoved",
+      geometry: this.root.getBoundsObject()
+    })
 
     if (this.geometry && !this.root?.drawingEnabled) {
       this.root.emitUpdate()
     }
+
+    this.root.setDrawingJustDone(false)
 
     this.drawingDone()
   }

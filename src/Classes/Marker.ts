@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import type { MapynaGoogleMap } from "../MapynaGoogleMap"
 import type { MapynaLeaflet } from "../MapynaLeaflet"
 import type * as L from "leaflet"
@@ -26,5 +25,17 @@ export abstract class MapynaMarker {
 
   isClusteringEnabled() {
     return this.root.config.clustering?.enabled
+  }
+
+  isSpiderfierEnabled() {
+    const zoom = this.root.zoom()
+
+    const minZoom = this.root.config.spiderfy.zoom || 0
+
+    if (this.root.config.spiderfy.enabled && zoom && zoom > minZoom) {
+      return true
+    } else {
+      return false
+    }
   }
 }

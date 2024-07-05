@@ -3,7 +3,7 @@ import type { TMapynaNotify } from "../types/config.type"
 import type { MapynaMap } from "./Map"
 
 export class MapynaNotify {
-  root: MapynaMap
+  root: MapynaMap<google.maps.Map | L.Map>
   config: TMapynaNotify
   $container: HTMLElement | undefined
   $notify: HTMLElement | undefined
@@ -12,7 +12,7 @@ export class MapynaNotify {
   }
   timeouts: any
 
-  constructor(root: MapynaMap) {
+  constructor(root: MapynaMap<google.maps.Map | L.Map>) {
     this.root = root
     this.config = this.root.config.notify!
     this.messages = {}

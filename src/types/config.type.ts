@@ -1,7 +1,14 @@
 import type { MarkerClustererOptions } from "@googlemaps/markerclusterer"
 import type { LatLngLiteral, MarkerClusterGroupOptions } from "leaflet"
 
-export type TMapynaConfig = {
+export type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>
+
+export type TMapynaConfig = AtLeast<
+  TMapynaBaseConfig,
+  "elementId" | "gMapId" | "defaultCenter" | "defaultZoom"
+>
+
+export type TMapynaBaseConfig = {
   /**
    * The ID of the HTML element where the map will be rendered.
    * @default "mapyna"
@@ -62,7 +69,7 @@ export type TMapynaConfig = {
    *
    * @default null
    */
-  data?: unknown
+  data: unknown
 
   /**
    * The default zoom level of the map. It specifies the initial zoom level when the map loads.
@@ -215,6 +222,52 @@ export type TMapynaConfig = {
    * Configuration for showing custom messages on the map
    */
   notify: TMapynaNotify
+
+  /**
+   * Configuration for spiderfying
+   *
+   * **Note:** Only available in Google Map
+   */
+  spiderfy: {
+    /**
+     * Determines whether spiderfying is enabled
+     * @default true
+     */
+    enabled: boolean
+
+    /**
+     * zoom value to start spiderfying
+     * @default 12
+     * */
+    zoom: number | null
+
+    /**
+     * The options for spiderfying
+     * @default
+     * {
+        markersWontMove: true,
+        markersWontHide: true,
+        keepSpiderfied: true,
+        circleSpiralSwitchover : 9,
+        spiralFootSeparation: 26,
+        spiralLengthStart: 11,
+        spiralLengthFactor: 4,
+        circleFootSeparation: 23,
+        nearbyDistance: 20
+        }
+     */
+    options: {
+      markersWontMove: boolean
+      markersWontHide: boolean
+      keepSpiderfied: boolean
+      circleSpiralSwitchover: number
+      spiralFootSeparation: number
+      spiralLengthStart: number
+      spiralLengthFactor: number
+      circleFootSeparation: number
+      nearbyDistance: number
+    }
+  }
 
   /**
    * Configuration for marker clustering
@@ -497,7 +550,7 @@ export type TMapynaLayer = {
    *
    * **Required if type is `point`**
    */
-  idKey?: string
+  idKey: string
 
   /**
    * The key in the data source representing the latitude value for each point.
@@ -523,14 +576,14 @@ export type TMapynaLayer = {
   /**
    * The info window configuration
    */
-  infoWindow?: TInfoWindow
+  infoWindow: TInfoWindow
 
   /**
    * The optional fetch callback function
    * @param {TBoundingBox} data - The data object representing the data source associated with the layer
    * @return {Promise<TLayerCallbackResponse[]> | null}
    */
-  fetchCallback?: (
+  fetchCallback: (
     data: TBoundingBox
   ) => Promise<TLayerCallbackResponse[]> | null
 }
@@ -570,7 +623,7 @@ export type TLayerCallbackGeometry = {
       }[][]
 }
 
-type TInfoWindowBase = {
+export type TInfoWindow = {
   enabled: boolean
 
   /**
@@ -591,9 +644,12 @@ type TInfoWindowBase = {
    * @default true
    */
   caching: boolean
-}
 
-type TInfoWindowWithRender = {
+  /**
+   * Specifies the key in the data source that represents the content of the info window. The value of the corresponding key in the data source will be used as the content for the info window.
+   */
+  dataKey?: string
+
   /**
    * Allows you to define a custom rendering function for the content of the info window. This function will be responsible for generating the HTML or content structure for the info window. If render is provided, it will take precedence over the dataKey option
    * @example
@@ -612,21 +668,8 @@ type TInfoWindowWithRender = {
    * @return {string | Promise<string>} The HTML string representing the content
    *                  of the info window.
    */
-  render: (data: any) => Promise<string>
-
-  dataKey?: never
-} & TInfoWindowBase
-
-type TInfoWindowWithoutRender = {
-  render?: never
-
-  /**
-   * Specifies the key in the data source that represents the content of the info window. The value of the corresponding key in the data source will be used as the content for the info window.
-   */
-  dataKey: string
-} & TInfoWindowBase
-
-export type TInfoWindow = TInfoWindowWithRender | TInfoWindowWithoutRender
+  render?: (data: any) => Promise<string>
+}
 
 export type TMapynaNotify = {
   /**

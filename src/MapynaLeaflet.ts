@@ -12,7 +12,7 @@ type TOptions = {
   zoom?: number
 }
 
-export class MapynaLeaflet extends MapynaMap {
+export class MapynaLeaflet extends MapynaMap<L.Map> {
   satelliteLayer: L.TileLayer | null
   roadmapLayer: L.TileLayer | null
 
@@ -66,9 +66,7 @@ export class MapynaLeaflet extends MapynaMap {
     })
 
     this.addDependencies().then(() => {
-      if (self.map instanceof L.Map) {
-        self.map.on("moveend", () => self.handleViewUpdate.call(self))
-      }
+      self.map?.on("moveend", () => self.handleViewUpdate.call(self))
 
       if (this.data) {
         self.dataSetup()
@@ -115,23 +113,21 @@ export class MapynaLeaflet extends MapynaMap {
       }
     }
 
-    if (this.markerObject?.markerCluster && this.map instanceof L.Map) {
+    if (this.markerObject?.markerCluster) {
       this.map?.addLayer(this.markerObject.markerCluster as L.LayerGroup)
     }
 
     // Fit the map to the bounds
-    if (bounds && this.map instanceof L.Map) {
+    if (bounds) {
       this.map?.fitBounds(bounds)
     }
   }
 
   enableMap() {
-    if (this.map instanceof L.Map) {
-      this.map.dragging.enable()
+    this.map?.dragging.enable()
 
-      if (this.config.scrollWheel) {
-        this.map.scrollWheelZoom.enable()
-      }
+    if (this.config.scrollWheel) {
+      this.map?.scrollWheelZoom.enable()
     }
   }
 
@@ -140,15 +136,11 @@ export class MapynaLeaflet extends MapynaMap {
   }
 
   enableDragging() {
-    if (this.map instanceof L.Map) {
-      this.map.dragging.enable()
-    }
+    this.map?.dragging.enable()
   }
 
   disableDragging() {
-    if (this.map instanceof L.Map) {
-      this.map?.dragging.disable()
-    }
+    this.map?.dragging.disable()
   }
 
   defineBounds() {
@@ -156,9 +148,7 @@ export class MapynaLeaflet extends MapynaMap {
   }
 
   fitBounds(bounds: L.LatLngBounds) {
-    if (this.map instanceof L.Map) {
-      return this.map?.fitBounds(bounds)
-    }
+    return this.map?.fitBounds(bounds)
   }
 
   zoom() {
@@ -166,16 +156,12 @@ export class MapynaLeaflet extends MapynaMap {
   }
 
   project(point: [number, number], zoom: number) {
-    if (this.map instanceof L.Map) {
-      return this.map?.project(point, zoom)
-    }
+    return this.map?.project(point, zoom)
   }
 
   getMarkerPixelPosition(marker: L.Marker) {
     const latLng = marker.getLatLng()
-    if (this.map instanceof L.Map) {
-      return this.map?.latLngToContainerPoint(latLng)
-    }
+    return this.map?.latLngToContainerPoint(latLng)
   }
 
   getBoundsObject() {
