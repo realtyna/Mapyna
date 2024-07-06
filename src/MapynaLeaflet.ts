@@ -1,4 +1,4 @@
-import { type LatLngExpression } from "leaflet"
+import type { LatLngExpression } from "leaflet"
 import { MapynaLeafletControllers } from "./Leaflet/LeafletControllers"
 import { MapynaMap } from "./Classes/Map"
 import { MapynaLeafletMarker } from "./Leaflet/LeafletMarker"
