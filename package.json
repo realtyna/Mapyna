@@ -1,6 +1,6 @@
 {
   "name": "mapyna",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Javascript library for seamless integration of Google Maps and Leaflet",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
