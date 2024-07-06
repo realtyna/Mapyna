@@ -29,4 +29,7 @@ if (typeof window !== "undefined") {
 
 export default mapyna
 
+export { MapynaGoogleMap } from "./MapynaGoogleMap"
+export { MapynaLeaflet } from "./MapynaLeaflet"
+
 export type { TMapynaConfig }

@@ -1,10 +1,11 @@
 {
   "name": "mapyna",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Javascript library for seamless integration of Google Maps and Leaflet",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/cjs.js",
   "types": "dist/index.d.ts",
+  "unpkg": "dist/umd.min.js",
+  "module": "dist/esm.js",
   "scripts": {
     "clean": "npx rimraf dist",
     "build:web": "npm run clean && npx webpack",
