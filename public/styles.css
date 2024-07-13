@@ -223,12 +223,24 @@
 .mapyna-infowindow-gallery {
   position: relative;
   width: 100%;
-  height: 130px;
+  height: 150px;
+  overflow-y: hidden;
 }
 
-.mapyna-infowindow-gallery img {
+.mapyna-infowindow-slider {
+  display: flex;
   width: 100%;
+  scroll-behavior: smooth;
+  background-color: #32cd32;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+}
+
+.mapyna-infowindow-slider img {
+  width: 100%;
+  object-fit: cover;
   height: 100%;
+  scroll-snap-align: center;
 }
 
 .mapyna-infowindow-gallery-next,
@@ -251,32 +263,6 @@
 
 .mapyna-infowindow-gallery-prev {
   left: 0;
-}
-
-.mapyna-infowindow-gallery-bullets {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-  position: absolute;
-  bottom: 5px;
-  z-index: 10;
-  width: 100%;
-}
-
-.mapyna-infowindow-gallery-bullet {
-  width: 5px;
-  height: 5px;
-  background-color: #fff;
-  opacity: 0.6;
-  border-radius: 50%;
-  margin: 0 2px;
-  cursor: pointer;
-}
-
-.mapyna-infowindow-gallery-bullet.active {
-  width: 7px;
-  height: 7px;
-  opacity: 1;
 }
 
 .mapyna-infowindow-tags {

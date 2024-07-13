@@ -145,6 +145,13 @@ export class MapynaControllers {
   }
 
   createLayersController($element: HTMLElement, positionCode: string) {
+    const isEnabled = Object.values(this.root.config.layers).some(
+      (value) => value.enabled
+    )
+    if (!isEnabled) {
+      return
+    }
+
     this.createButtonIconController(
       $element,
       config.assets.controllers.layers,

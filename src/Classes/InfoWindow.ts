@@ -1,4 +1,3 @@
-import { getSlider } from "simple-slider"
 import makeCancellablePromise from "make-cancellable-promise"
 import type { MapynaGoogleMap } from "../MapynaGoogleMap"
 import type { MapynaLeaflet } from "../MapynaLeaflet"
@@ -190,78 +189,35 @@ export abstract class MapynaInfoWindow {
 
     const images = $sliderContainer.getElementsByTagName("img")
 
-    let lastBulletIndex = 0
-    let isNext = true
-
-    const slider = getSlider({
-      container: $sliderContainer,
-      paused: true,
-      onChange: () => {
-        updateBullets()
-      }
-    })
-
     const $nextButton = document.querySelector(
       ".mapyna-infowindow-gallery-next"
-    )
+    ) as HTMLDivElement
     const $prevButton = document.querySelector(
       ".mapyna-infowindow-gallery-prev"
-    )
+    ) as HTMLDivElement
 
-    const $bulletsContainer = document.querySelector(
-      ".mapyna-infowindow-gallery-bullets"
-    )
-    const $bullets: HTMLDivElement[] = []
-
-    const updateBullets = () => {
-      $bullets[lastBulletIndex].classList.remove("active")
-      const currentIndex = slider.currentIndex()
-      const bulletIndex: number = !isNext
-        ? images.length - currentIndex - 1
-        : currentIndex
-      $bullets[bulletIndex].classList.add("active")
-      lastBulletIndex = bulletIndex
-    }
-
-    const createBullet = function (index: number) {
-      const $bullet = document.createElement("div")
-      $bullet.classList.add("mapyna-infowindow-gallery-bullet")
-      if (index === 0) {
-        $bullet.classList.add("active")
+    if (images.length < 2) {
+      if ($nextButton && $prevButton) {
+        $nextButton.style.display = "none"
+        $prevButton.style.display = "none"
       }
-      $bullet.addEventListener("click", function (e) {
-        e.preventDefault()
-      })
-      $bullets.push($bullet)
-      return $bullet
+      return
     }
 
     if ($nextButton) {
-      $nextButton.addEventListener("click", function (e) {
-        if (!isNext) {
-          slider.reverse()
-          isNext = true
-        }
-        slider.next()
+      $nextButton.addEventListener("click", (e) => {
         e.preventDefault()
+        const slideWidth = $sliderContainer.clientWidth
+        $sliderContainer.scrollLeft += slideWidth
       })
     }
 
     if ($prevButton) {
-      $prevButton.addEventListener("click", function (e) {
-        if (isNext) {
-          slider.reverse()
-          isNext = false
-        }
-        slider.next()
+      $prevButton.addEventListener("click", (e) => {
         e.preventDefault()
+        const slideWidth = $sliderContainer.clientWidth
+        $sliderContainer.scrollLeft -= slideWidth
       })
-    }
-
-    if ($bulletsContainer) {
-      for (let i = 0; i < images.length; i++) {
-        $bulletsContainer.appendChild(createBullet(i))
-      }
     }
   }
 
